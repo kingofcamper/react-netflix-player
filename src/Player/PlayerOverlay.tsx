@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Chip, Fade, styled, Typography } from '@mui/material';
+import { Box, Chip, Fade, styled, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { ReactPlayerProps } from 'react-player';
 
 const StyledPlayerOverlay = styled('div')<ReactPlayerProps>`
@@ -28,6 +28,8 @@ const StyledPlayerOverlay = styled('div')<ReactPlayerProps>`
 
 const PlayerOverlay: React.FC<ReactPlayerProps> = (props) => {
   const { state } = props;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
     <StyledPlayerOverlay state={state}>
@@ -36,7 +38,7 @@ const PlayerOverlay: React.FC<ReactPlayerProps> = (props) => {
           <Chip label={'#1 in series'} color={'warning'} />
         </Fade>
         <Fade in>
-          <Typography variant="h4" color={'white'} mt={2}>
+          <Typography variant="h4" color={'white'} mt={2} sx={{ fontSize: isMobile ? '1rem' : '2rem' }}>
             Lost in Japan
           </Typography>
         </Fade>
