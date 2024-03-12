@@ -1,16 +1,20 @@
 import * as React from 'react';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
-import { IconButton, Slider, Stack, styled, Typography } from '@mui/material';
+import { IconButton, Slider, Stack, styled, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { ReactPlayerProps } from 'react-player';
 import { format } from 'date-fns';
 import { FullscreenRounded, VolumeDownRounded, VolumeUpRounded } from '@mui/icons-material';
 import screenfull from 'screenfull';
 import { findDOMNode } from 'react-dom';
 
-const StyledPlayerControls = styled('div')`
+interface PlayerControlsProps {
+  isMobile: boolean;
+}
+
+const StyledPlayerControls = styled('div')<PlayerControlsProps>`
   position: absolute;
-  padding: 10px;
+  padding: ${({ isMobile }) => (isMobile ? '0' : '10px')};
   box-sizing: border-box;
   bottom: 0;
   left: 0;
@@ -57,6 +61,8 @@ const StyledPlayerControls = styled('div')`
 
 const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   const { state, dispatch, wrapperRef, playerRef } = props;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSound = (_event: Event, newValue: number | number[]) => {
     dispatch({ type: 'VOLUME', payload: newValue });
@@ -98,7 +104,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
 
   const renderSoundSlider = () => {
     return (
-      <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
+      <Stack spacing={isMobile ? 1 : 2} direction="row" sx={{ mb: isMobile ? 0 : 1, px: 1 }} alignItems="center">
         <VolumeDownRounded sx={{ fontSize: '1.5rem', color: 'white' }} />
         <Slider
           aria-label="Volume"
@@ -115,7 +121,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
 
   const renderDurationText = () => {
     return (
-      <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
+      <Stack spacing={isMobile ? 1 : 2} direction="row" sx={{ mb: isMobile ? 0 : 1, px: 1 }} alignItems="center">
         <Typography variant="body2" color="white">
           {format(new Date(state.progress.playedSeconds * 1000), 'mm:ss')}
           {' / '}
@@ -134,15 +140,15 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   };
 
   return (
-    <StyledPlayerControls className={'video-player__controls'}>
+    <StyledPlayerControls isMobile={isMobile} className={'video-player__controls'}>
       <Stack direction="row" alignItems="center">
         {renderSeekSlider()}
       </Stack>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={isMobile ? 0 : 2}>
           {renderPlayButton()} {renderSoundSlider()} {renderDurationText()}
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" alignItems="center" spacing={isMobile ? 0 : 2}>
           {renderFullscreenButton()}
         </Stack>
       </Stack>
